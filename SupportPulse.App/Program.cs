@@ -311,6 +311,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseAuthentication();
 
 app.Use(async (context, next) =>
 {
@@ -324,7 +325,6 @@ app.Use(async (context, next) =>
     await next();
 });
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 // Protect static files under /admin – return 404 for non‑admin users to hide admin assets
