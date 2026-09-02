@@ -3,6 +3,9 @@
 <head>
     <partial name="Partials/Layout/_MeatTagsPartial" />
     <title>@(ViewData["Title"] == null ? "Kheir" : $"Kheir - {ViewData["Title"]}")</title>
+
+    <link rel="manifest" href="~/manifest.json">
+
     <partial name="Partials/Layout/_StylesLinkPartial" />
     @await RenderSectionAsync("Css", required: false)
 </head>
