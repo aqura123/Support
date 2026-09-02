@@ -1,23 +1,23 @@
 version: '3.8'
 
 services:
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+  postgres:
+    image: postgres:17-alpine
     container_name: supportpulse-db
     environment:
-      SA_PASSWORD: ${SA_PASSWORD}
-      ACCEPT_EULA: "Y"
-      MSSQL_PID: "Express"
+      POSTGRES_DB: SupportPulse_DB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
-      - "1433:1433"
+      - "5432:5432"
     volumes:
-      - sqldata:/var/opt/mssql
+      - postgresdata:/var/lib/postgresql/data
     healthcheck:
-      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${SA_PASSWORD} -C -Q "SELECT 1" || exit 1
+      test: ["CMD-SHELL", "pg_isready -U postgres -d SupportPulse_DB"]
       interval: 10s
       timeout: 5s
-      retries: 20
-      start_period: 40s
+      retries: 5
+      start_period: 10s
 
   app:
     build:
@@ -25,11 +25,11 @@ services:
       dockerfile: SupportPulse.App/Dockerfile
     container_name: supportpulse-app
     depends_on:
-      sqlserver:
+      postgres:
         condition: service_healthy
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
-      - ConnectionStrings__Development=Server=sqlserver,1433;Database=SupportPulse_DB;User=sa;Password=${SA_PASSWORD};TrustServerCertificate=true
+      - ConnectionStrings__Development=Host=postgres;Port=5432;Database=SupportPulse_DB;Username=postgres;Password=${POSTGRES_PASSWORD:-postgres}
     ports:
       - "5000:8080"
     volumes:
@@ -37,5 +37,5 @@ services:
     restart: unless-stopped
 
 volumes:
-  sqldata:
+  postgresdata:
   app-uploads:
