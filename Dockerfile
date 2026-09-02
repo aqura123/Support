@@ -32,6 +32,6 @@ COPY --from=publish /app/publish .
 
 # Create upload directory with write permissions for the non‑root user
 RUN mkdir -p /app/UploadedFiles/Chats && chmod 777 /app/UploadedFiles/Chats
-VOLUME ["/app/UploadedFiles"]
+# VOLUME ["/app/UploadedFiles"]
 
 ENTRYPOINT ["dotnet", "SupportPulse.App.dll"]
