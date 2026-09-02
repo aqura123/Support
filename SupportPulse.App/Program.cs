@@ -54,6 +54,9 @@ using System.Threading.Channels;
 
 #endregion
 
+// خواندن تاریخ
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // =====================================================================
