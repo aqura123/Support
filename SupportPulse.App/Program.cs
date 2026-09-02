@@ -1,4 +1,4 @@
-﻿#region Usings
+#region Usings
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -166,7 +166,7 @@ builder.Services.AddSingleton<PasswordHasher>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("Postgres"));
     options.ConfigureWarnings(warnings =>
         warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
 });
@@ -309,6 +309,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
 // Protect static files under /admin – return 404 for non‑admin users to hide admin assets
 app.Use(async (context, next) =>
 {
@@ -346,10 +347,8 @@ app.MapStaticAssets();
 
 app.UseResponseCaching();
 
-
 // Custom middleware: validate security stamp
 app.UseMiddleware<SecurityStampValidatorMiddleware>();
-
 
 // MVC routes
 app.MapControllerRoute(
