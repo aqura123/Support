@@ -246,7 +246,7 @@ builder.Services.AddAuthentication(options =>
     .AddCookie(options =>
     {
         // options.LoginPath = "/SignUp";
-        options.LoginPath = "/Identity/Login";
+        options.LoginPath = "/Login";
         options.LogoutPath = "/Logout";
         options.AccessDeniedPath = "/Error/404";
         options.ExpireTimeSpan = TimeSpan.FromDays(30);
@@ -311,6 +311,19 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/" &&
+        !(context.User.Identity?.IsAuthenticated ?? false))
+    {
+        context.Response.Redirect("/Login");
+        return;
+    }
+
+    await next();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
